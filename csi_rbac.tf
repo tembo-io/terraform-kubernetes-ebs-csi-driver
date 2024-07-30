@@ -19,7 +19,7 @@ resource "kubernetes_cluster_role" "provisioner" {
   rule {
     api_groups = [""]
     resources  = ["persistentvolumes"]
-    verbs      = ["get", "list", "watch", "create", "delete"]
+    verbs      = ["get", "list", "watch", "create", "patch", "delete"]
   }
 
   rule {
@@ -74,6 +74,12 @@ resource "kubernetes_cluster_role" "provisioner" {
     api_groups = ["storage.k8s.io"]
     resources  = ["volumeattachments"]
     verbs      = ["get", "list", "watch"]
+  }
+
+  rule {
+    api_groups = ["storage.k8s.io"]
+    resources  = ["volumeattributesclasses"]
+    verbs      = ["get"]
   }
 }
 
@@ -196,6 +202,12 @@ resource "kubernetes_cluster_role" "resizer" {
     resources  = ["pods"]
     verbs      = ["get", "list", "watch"]
   }
+
+  rule {
+    api_groups = ["storage.k8s.io"]
+    resources  = ["volumeattributesclasses"]
+    verbs      = ["get", "list", "watch"]
+  }
 }
 
 resource "kubernetes_cluster_role_binding" "resizer" {
@@ -236,7 +248,7 @@ resource "kubernetes_cluster_role" "snapshotter" {
   rule {
     api_groups = ["snapshot.storage.k8s.io"]
     resources  = ["volumesnapshotcontents/status"]
-    verbs      = ["update"]
+    verbs      = ["update", "patch"]
   }
 
   rule {
@@ -272,3 +284,4 @@ resource "kubernetes_cluster_role_binding" "snapshotter" {
     namespace = kubernetes_service_account.csi_driver.metadata[0].namespace
   }
 }
+

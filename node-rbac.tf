@@ -16,8 +16,21 @@ resource "kubernetes_cluster_role" "node" {
   rule {
     api_groups = [""]
     resources  = ["nodes"]
+    verbs      = ["get", "patch"]
+  }
+
+  rule {
+    api_groups = ["storage.k8s.io"]
+    resources  = ["volumeattachments"]
+    verbs      = ["get", "list", "watch"]
+  }
+
+  rule {
+    api_groups = ["storage.k8s.io"]
+    resources  = ["csiodes"]
     verbs      = ["get"]
   }
+
 }
 
 resource "kubernetes_cluster_role_binding" "node" {
@@ -38,3 +51,4 @@ resource "kubernetes_cluster_role_binding" "node" {
     namespace = kubernetes_service_account.node.metadata[0].namespace
   }
 }
+
